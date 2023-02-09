@@ -45,13 +45,14 @@ public class SeedOnInitializingBean implements InitializingBean {
                 .forEach(roleValues -> roleService.saveRole(new RoleDTO(null, roleValues)));
         Optional.of(userDTO)
                 .filter(userDTO1 -> {
+
                     try {
                         return !userService.existUserByUsernameOrEmail(userDTO1.username(), userDTO1.email());
-                    } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException |
-                             NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException |
-                             InvalidKeyException e) {
+                    } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchPaddingException |
+                             IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
                         throw new RuntimeException(e);
                     }
+
                 })
                 .map(userDTO1 -> {
                     try {

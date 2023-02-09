@@ -1,13 +1,17 @@
 package com.seedon.SeedOnTanda.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seedon.SeedOnTanda.common.CommonBaseAbstractEntity;
 import com.seedon.SeedOnTanda.role.entity.Role;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
+import com.seedon.SeedOnTanda.user.state.StateType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,9 @@ public class User extends CommonBaseAbstractEntity {
     private String phoneNumber;
 
 
+    @Column(columnDefinition = "json", name = "state")
+    @Type(JsonType.class)
+    private StateType state;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",

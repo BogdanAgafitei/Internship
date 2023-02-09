@@ -1,12 +1,17 @@
 package com.seedon.SeedOnTanda.user.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.seedon.SeedOnTanda.common.Encryption;
 import com.seedon.SeedOnTanda.common.pagination.SeedOnPage;
+import com.seedon.SeedOnTanda.enums.roles.RoleValues;
 import com.seedon.SeedOnTanda.role.service.RoleService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
 import com.seedon.SeedOnTanda.user.repository.UserRepository;
+import com.seedon.SeedOnTanda.user.state.AdminState;
+import com.seedon.SeedOnTanda.user.state.UserState;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +55,11 @@ public class UserServiceImpl implements UserService {
         final var userTemp = Encryption.userDtoToUserMapper(userDto);
         roleList.forEach(userTemp::addRole);
         userTemp.setPassword(passwordEncoder.encode(userDto.password()));
+        if(roleList.get(0).getRoleName() == RoleValues.ROLE_ADMIN){
+            userTemp.setState(new AdminState());
+        }else{
+            userTemp.setState(new UserState());
+        }
         return Encryption.userToDtoMapper(userRepository.save(userTemp));
     }
 
