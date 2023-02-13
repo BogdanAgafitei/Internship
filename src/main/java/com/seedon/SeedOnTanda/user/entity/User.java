@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seedon.SeedOnTanda.common.CommonBaseAbstractEntity;
 import com.seedon.SeedOnTanda.role.entity.Role;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
-import com.seedon.SeedOnTanda.jwt.entity.Jwt;
 import com.seedon.SeedOnTanda.user.state.StateType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -79,14 +78,6 @@ public class User extends CommonBaseAbstractEntity {
     public void addRole(Role role) {
         roles.add(role);
         role.getUsers().add(this);
-    }
-
-    public void removeRolesAtDelete() {
-        for (Role role : roles) {
-            role.getUsers().remove(this);
-        }
-        roles = new ArrayList<>();
-
     }
 
     public void updateStates(User updated, List<Role> roles, String password) {
