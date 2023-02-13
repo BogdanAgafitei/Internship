@@ -3,6 +3,7 @@ package com.seedon.SeedOnTanda.user.service;
 
 import com.seedon.SeedOnTanda.common.Encryption;
 import com.seedon.SeedOnTanda.enums.roles.RoleValues;
+import com.seedon.SeedOnTanda.jwt.repository.JwtRepository;
 import com.seedon.SeedOnTanda.role.service.RoleService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
@@ -16,11 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.function.Function;
 
 @Service
@@ -30,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final PasswordEncoder passwordEncoder;
+    private final JwtRepository jwtRepository;
 
     public UserDTO getUserById(String id) {
         return findByIdOrNotFound(id, Encryption::userToDtoMapper);
@@ -124,5 +128,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
+    @Scheduled(fixedRate = 86400000)
+    public void execute() {
+        userRepository.findAll()
+                .forEach(user -> {
+                    final var jwt = jwtRepository.getJwtTokensByCreatedAtIsGreaterThan(new Date(System.currentTimeMillis() - 259200000), user.getId());
+                    user.setEnabled(!jwt.isEmpty());
+                    userRepository.save(user);
+                });
+        System.out.println("Code for Enabled is being executed...");
+    }
 }

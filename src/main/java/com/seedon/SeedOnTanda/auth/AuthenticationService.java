@@ -6,6 +6,7 @@ import com.seedon.SeedOnTanda.jwt.entity.Jwt;
 import com.seedon.SeedOnTanda.jwt.service.JwtService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
+import com.seedon.SeedOnTanda.user.repository.UserRepository;
 import com.seedon.SeedOnTanda.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
     private final JwtService jwtService;
 
@@ -36,6 +38,7 @@ public class AuthenticationService {
         );
         var user = userService.findUserByUsernameOrEmail(getUsernameOrEmail(request), getUsernameOrEmail(request));
         var jwtToken = jwtTokenService.generateToken(new SeedOnUserDetails(user));
+        user.setEnabled(true);
         saveJwt(jwtToken, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)

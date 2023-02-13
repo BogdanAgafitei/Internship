@@ -42,11 +42,13 @@ public class User extends CommonBaseAbstractEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-
     @Column(columnDefinition = "json", name = "state")
     @Type(JsonType.class)
     @JsonProperty("state")
     private StateType state;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
