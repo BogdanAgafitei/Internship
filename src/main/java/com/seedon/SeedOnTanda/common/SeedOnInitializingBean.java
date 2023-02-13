@@ -44,24 +44,7 @@ public class SeedOnInitializingBean implements InitializingBean {
                 .filter(roleValues -> !roleService.existsRoleByRoleName(roleValues))
                 .forEach(roleValues -> roleService.saveRole(new RoleDTO(null, roleValues)));
         Optional.of(userDTO)
-                .filter(userDTO1 -> {
-
-                    try {
-                        return !userService.existUserByUsernameOrEmail(userDTO1.username(), userDTO1.email());
-                    } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchPaddingException |
-                             IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                })
-                .map(userDTO1 -> {
-                    try {
-                        return userService.saveUser(userDTO);
-                    } catch (InvalidAlgorithmParameterException | NoSuchPaddingException |
-                             IllegalBlockSizeException | UnsupportedEncodingException |
-                             NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                .filter(userDTO1 -> !userService.existUserByUsernameOrEmail(userDTO1.getUsername(), userDTO1.getEmail()))
+                .map(userDTO1 -> userService.saveUser(userDTO));
     }
 }

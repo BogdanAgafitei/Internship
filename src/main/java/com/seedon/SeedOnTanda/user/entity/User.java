@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seedon.SeedOnTanda.common.CommonBaseAbstractEntity;
 import com.seedon.SeedOnTanda.role.entity.Role;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
+import com.seedon.SeedOnTanda.jwt.entity.Jwt;
 import com.seedon.SeedOnTanda.user.state.StateType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -45,6 +46,7 @@ public class User extends CommonBaseAbstractEntity {
 
     @Column(columnDefinition = "json", name = "state")
     @Type(JsonType.class)
+    @JsonProperty("state")
     private StateType state;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -55,13 +57,13 @@ public class User extends CommonBaseAbstractEntity {
 
 
     public User(UserDTO userDTO) {
-        setId(userDTO.id());
-        firstName = userDTO.firstName();
-        lastName = userDTO.lastName();
-        username = userDTO.username();
-        email = userDTO.email();
-        password = userDTO.password();
-        phoneNumber = userDTO.phoneNumber();
+        setId(userDTO.getId());
+        firstName = userDTO.getFirstName();
+        lastName = userDTO.getLastName();
+        username = userDTO.getUsername();
+        email = userDTO.getEmail();
+        password = userDTO.getPassword();
+        phoneNumber = userDTO.getPhoneNumber();
     }
 
     public User(String id, String firstName, String lastName, String username, String email, String password, String phoneNumber) {
@@ -87,8 +89,7 @@ public class User extends CommonBaseAbstractEntity {
 
     }
 
-
-    public void updateStates( User updated, List<Role> roles, String password) {
+    public void updateStates(User updated, List<Role> roles, String password) {
         setFirstName(updated.getFirstName());
         setLastName(updated.getLastName());
         setUsername(updated.getUsername());

@@ -74,13 +74,13 @@ public class Encryption {
 
     public static User userDtoToUserMapper(UserDTO userDTO) {
         return new User(
-                userDTO.id(),
-                encrypt(userDTO.firstName()),
-                encrypt(userDTO.lastName()),
-                userDTO.username(),
-                encrypt(userDTO.email()),
-                userDTO.password(),
-                encrypt(userDTO.phoneNumber())
+                userDTO.getId(),
+                encrypt(userDTO.getFirstName()),
+                encrypt(userDTO.getLastName()),
+                userDTO.getUsername(),
+                encrypt(userDTO.getEmail()),
+                userDTO.getPassword(),
+                encrypt(userDTO.getPhoneNumber())
         );
     }
 }

@@ -1,7 +1,9 @@
 package com.seedon.SeedOnTanda.auth;
 
-import com.seedon.SeedOnTanda.auth.config.JwtService;
-import com.seedon.SeedOnTanda.role.entity.Role;
+import com.seedon.SeedOnTanda.auth.config.JwtTokenService;
+import com.seedon.SeedOnTanda.enums.statuses.Statuses;
+import com.seedon.SeedOnTanda.jwt.entity.Jwt;
+import com.seedon.SeedOnTanda.jwt.service.JwtService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
 import com.seedon.SeedOnTanda.user.service.UserService;
@@ -10,13 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service
@@ -24,6 +19,7 @@ import java.util.Optional;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final JwtTokenService jwtTokenService;
     private final JwtService jwtService;
 
     String getUsernameOrEmail(AuthenticationRequest request) {
@@ -31,7 +27,7 @@ public class AuthenticationService {
                 .orElseGet(request::getUsername);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) throws Exception {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         getUsernameOrEmail(request),
@@ -39,14 +35,15 @@ public class AuthenticationService {
                 )
         );
         var user = userService.findUserByUsernameOrEmail(getUsernameOrEmail(request), getUsernameOrEmail(request));
-        var jwtToken = jwtService.generateToken(new SeedOnUserDetails(user));
+        var jwtToken = jwtTokenService.generateToken(new SeedOnUserDetails(user));
+        saveJwt(jwtToken, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
 
     }
 
-    public AuthenticationResponse register(RegisterRequest request) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, UnsupportedEncodingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public AuthenticationResponse register(RegisterRequest request) {
         final var user = new UserDTO(
                 null,
                 request.getFirstName(),
@@ -57,9 +54,26 @@ public class AuthenticationService {
                 request.getPhoneNumber(),
                 request.getRole());
         userService.saveUser(user);
-        final var jwtToken = jwtService.generateToken(new SeedOnUserDetails(new User(user)));
+        final var jwtToken = jwtTokenService.generateToken(new SeedOnUserDetails(new User(user)));
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    private void saveJwt(String jwtToken, User user) {
+        final var jwt = new Jwt();
+        final var oldToken = jwtService.getJwtByUserIdAndStatus(user.getId(), Statuses.VALID);
+        oldToken.ifPresent(value -> value.setStatus(Statuses.EXPIRED));
+        final var jwtSetted = setJwtProperties(jwt, jwtToken, user);
+        jwtService.saveJwt(jwtSetted);
+
+    }
+
+    private Jwt setJwtProperties(Jwt jwt, String jwtToken, User user) {
+        jwt.setStatus(Statuses.VALID);
+        jwt.setExpirationTime(jwtTokenService.extractExpiration(jwtToken));
+        jwt.setUserId(user.getId());
+        jwt.setToken(jwtToken);
+        return jwt;
     }
 }

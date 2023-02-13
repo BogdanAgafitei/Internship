@@ -1,10 +1,7 @@
 package com.seedon.SeedOnTanda.user.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.seedon.SeedOnTanda.common.Encryption;
-import com.seedon.SeedOnTanda.common.pagination.SeedOnPage;
 import com.seedon.SeedOnTanda.enums.roles.RoleValues;
 import com.seedon.SeedOnTanda.role.service.RoleService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
@@ -51,13 +48,13 @@ public class UserServiceImpl implements UserService {
     public UserDTO saveUser(UserDTO userDto) {
         validateUser(userDto);
         logger.info(">>>> Saving an user to database...");
-        var roleList = roleService.getRolesByName(userDto.roles());
+        var roleList = roleService.getRolesByName(userDto.getRoles());
         final var userTemp = Encryption.userDtoToUserMapper(userDto);
         roleList.forEach(userTemp::addRole);
-        userTemp.setPassword(passwordEncoder.encode(userDto.password()));
-        if(roleList.get(0).getRoleName() == RoleValues.ROLE_ADMIN){
+        userTemp.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if (userDto.getRoles().contains(RoleValues.ROLE_ADMIN)) {
             userTemp.setState(new AdminState());
-        }else{
+        } else {
             userTemp.setState(new UserState());
         }
         return Encryption.userToDtoMapper(userRepository.save(userTemp));
@@ -68,9 +65,14 @@ public class UserServiceImpl implements UserService {
         logger.info("User trying to be updated with id : " + id);
         final var user = findByIdOrNotFound(id);
         final var updated = Encryption.userDtoToUserMapper(userDto);
-        var roles = roleService.getRolesByName(userDto.roles());
-        final var password = passwordEncoder.encode(userDto.password());
+        var roles = roleService.getRolesByName(userDto.getRoles());
+        final var password = passwordEncoder.encode(userDto.getPassword());
         user.updateStates(updated, roles, password);
+        if (userDto.getRoles().contains(RoleValues.ROLE_ADMIN)) {
+            user.setState(new AdminState());
+        } else {
+            user.setState(new UserState());
+        }
         return Encryption.userToDtoMapper(userRepository.save(user));
     }
 
@@ -95,11 +97,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUser(UserDTO userDTO) {
-        if (userRepository.existsUserByUsername(userDTO.username())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with username [%s]", userDTO.username()));
+        if (userRepository.existsUserByUsername(userDTO.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with username [%s]", userDTO.getUsername()));
         }
-        if (userRepository.existsUserByEmail(Encryption.encrypt(userDTO.email()))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with email [%s]", userDTO.email()));
+        if (userRepository.existsUserByEmail(Encryption.encrypt(userDTO.getEmail()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with email [%s]", userDTO.getEmail()));
         }
     }
 
@@ -114,11 +116,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUserBeforeUpdate(UserDTO userDTO, String id) {
-        if (userRepository.existsUserByUsernameExcludeId(userDTO.username(), id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with username [%s]", userDTO.username()));
+        if (userRepository.existsUserByUsernameExcludeId(userDTO.getUsername(), id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with username [%s]", userDTO.getUsername()));
         }
-        if (userRepository.existsUserByEmailExcludeId(Encryption.encrypt(userDTO.email()), id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with email [%s]", userDTO.email()));
+        if (userRepository.existsUserByEmailExcludeId(Encryption.encrypt(userDTO.getEmail()), id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("User already exist with email [%s]", userDTO.getEmail()));
         }
     }
 
