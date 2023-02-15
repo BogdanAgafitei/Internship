@@ -20,7 +20,6 @@ import java.util.Optional;
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService;
     private final JwtService jwtService;
 
