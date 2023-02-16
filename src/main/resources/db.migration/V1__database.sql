@@ -43,9 +43,14 @@ create table users_roles
     role_id varchar(255) not null
 );
 
-alter table users add constraint uniqueConstraint unique (username, email);
-alter table users add constraint uniqueConstraintUsername unique (username);
-alter table users add constraint uniqueConstraintEmail unique (email);
+alter table users
+    add constraint uniqueConstraint unique (username, email);
+alter table users
+    add constraint uniqueConstraintUsername unique (username);
+alter table users
+    add constraint uniqueConstraintEmail unique (email);
 
-alter table users_roles add constraint foreignConstraint foreign key (role_id) references roles(id);
-alter table users_roles add constraint foreignConstraint foreign key (user_id) references users(id);
+alter table users_roles
+    add constraint foreignConstraint foreign key (role_id) references roles (id);
+alter table users_roles
+    add constraint foreignConstraint foreign key (user_id) references users (id);

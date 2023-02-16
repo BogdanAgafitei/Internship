@@ -4,6 +4,7 @@ package com.seedon.SeedOnTanda.user.service;
 import com.seedon.SeedOnTanda.common.Encryption;
 import com.seedon.SeedOnTanda.enums.roles.RoleValues;
 import com.seedon.SeedOnTanda.jwt.repository.JwtRepository;
+import com.seedon.SeedOnTanda.kafka.KafkaNotify;
 import com.seedon.SeedOnTanda.role.service.RoleService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final PasswordEncoder passwordEncoder;
     private final JwtRepository jwtRepository;
+    private final KafkaNotify kafkaNotify;
 
     public UserDTO getUserById(String id) {
         return findByIdOrNotFound(id, Encryption::userToDtoMapper);
@@ -61,6 +63,7 @@ public class UserServiceImpl implements UserService {
         } else {
             userTemp.setState(new UserState());
         }
+        kafkaNotify.notifyUser("User has been saved");
         return Encryption.userToDtoMapper(userRepository.save(userTemp));
     }
 
@@ -134,6 +137,8 @@ public class UserServiceImpl implements UserService {
                 .forEach(user -> {
                     final var jwt = jwtRepository.getJwtTokensByCreatedAtIsGreaterThan(new Date(System.currentTimeMillis() - 259200000), user.getId());
                     user.setEnabled(!jwt.isEmpty());
+                    if (jwt.isEmpty())
+                        kafkaNotify.notifyUser("User is disabled");
                     userRepository.save(user);
                 });
         System.out.println("Code for Enabled is being executed...");
