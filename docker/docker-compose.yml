@@ -1,23 +1,36 @@
-services:
-  postgres:
-    container_name: postgres
-    image: postgres
-    environment:
-      POSTGRES_USER: amigoscode
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
-    ports:
-      - "5432:5432"
+version : '3.8'
+services :
+  seedon :
+    image: seedon:latest
+    container_name: seedon_tanda
+    depends_on:
+      kafka:
+        condition: service_healthy
     networks:
-      - postgres
-    restart: unless-stopped
+      - no-internet
+      - internet
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.0.130:5432/SeedOnTanda
+      - SPRING_DATASOURCE_USERNAME=amigoscode
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_FLYWAY_URL=jdbc:postgresql://192.168.0.130:5432/SeedOnTanda
+      - SPRING_FLYWAY_USER=amigoscode
+      - SPRING_FLYWAY_PASSWORD=password
+      - SPRING_KAFKA_SERVER=localhost:29092
+    ports:
+      - 8080:8080
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    external_links:
+      - docker-kafka-1
 
 networks:
-  postgres:
-    driver: bridge
+  no-internet:
+    external: true
+  internet:
+    external: true
 
-volumes:
-  postgres:
-  pgadmin:
+
+
+

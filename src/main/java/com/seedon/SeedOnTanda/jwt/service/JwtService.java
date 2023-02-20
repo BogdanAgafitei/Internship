@@ -23,10 +23,4 @@ public class JwtService {
     public Optional<Jwt> getJwtByUserIdAndStatus(String userId, Statuses status) {
         return jwtRepository.getJwtByUserIdAndStatus(userId, status);
     }
-
-    @Scheduled(fixedRate = 6000000)
-    public void execute() {
-        jwtRepository.setExpiredStatus(new Date(System.currentTimeMillis()));
-        System.out.println("Code for setting jwts expired is being executed...");
-    }
 }

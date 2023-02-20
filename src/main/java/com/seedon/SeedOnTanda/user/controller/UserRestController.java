@@ -1,5 +1,6 @@
 package com.seedon.SeedOnTanda.user.controller;
 
+import com.seedon.SeedOnTanda.common.request.PageableRequest;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.service.UserService;
 import jakarta.validation.Valid;
@@ -15,11 +16,8 @@ public class UserRestController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> findUsers(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "3") int size,
-                                                   @RequestParam(defaultValue = "username") String[] sortBy,
-                                                   @RequestParam(defaultValue = "ASC") String direction) {
-        return ResponseEntity.ok(userService.getUsers(page, size, sortBy, direction));
+    public ResponseEntity<Page<UserDTO>> findUsers(PageableRequest pageableRequest) {
+        return ResponseEntity.ok(userService.getUsers(pageableRequest));
     }
 
     @GetMapping("/{id}")

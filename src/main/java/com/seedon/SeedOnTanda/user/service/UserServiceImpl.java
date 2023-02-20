@@ -2,8 +2,8 @@ package com.seedon.SeedOnTanda.user.service;
 
 
 import com.seedon.SeedOnTanda.common.Encryption;
+import com.seedon.SeedOnTanda.common.request.PageableRequest;
 import com.seedon.SeedOnTanda.enums.roles.RoleValues;
-import com.seedon.SeedOnTanda.jwt.repository.JwtRepository;
 import com.seedon.SeedOnTanda.kafka.KafkaNotify;
 import com.seedon.SeedOnTanda.role.service.RoleService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
@@ -15,16 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
 import java.util.function.Function;
 
 @Service
@@ -34,20 +29,14 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final PasswordEncoder passwordEncoder;
-    private final JwtRepository jwtRepository;
     private final KafkaNotify kafkaNotify;
 
     public UserDTO getUserById(String id) {
         return findByIdOrNotFound(id, Encryption::userToDtoMapper);
     }
 
-    public Page<UserDTO> getUsers(int page, int size, String[] sort_by, String direction) {
-        final var pageRequest = PageRequest.of(
-                page,
-                size,
-                Sort.by(Sort.Direction.valueOf(direction.toUpperCase()), sort_by)
-        );
-        return userRepository.findAll(pageRequest)
+    public Page<UserDTO> getUsers(PageableRequest pageableRequest) {
+        return userRepository.findAll(pageableRequest.createPageRequest())
                 .map(Encryption::userToDtoMapper);
     }
 
@@ -75,20 +64,14 @@ public class UserServiceImpl implements UserService {
         var roles = roleService.getRolesByName(userDto.getRoles());
         final var password = passwordEncoder.encode(userDto.getPassword());
         user.updateStates(updated, roles, password);
-        if (userDto.getRoles().contains(RoleValues.ROLE_ADMIN)) {
-            user.setState(new AdminState());
-        } else {
-            user.setState(new UserState());
-        }
         return Encryption.userToDtoMapper(userRepository.save(user));
     }
 
-    @Transactional
     public void deleteUserById(String id) {
         logger.warn(">>>> Deleting user with id :" + id);
         Long deletedRecords = userRepository.deleteUserById(id);
         if (deletedRecords == 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User was not found by id [%s]".formatted(id));
+            logger.info("Deleted " + deletedRecords + " users");
     }
 
     public User findUserByUsernameOrEmail(String username, String email) {
@@ -131,16 +114,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Scheduled(fixedRate = 86400000)
-    public void execute() {
-        userRepository.findAll()
-                .forEach(user -> {
-                    final var jwt = jwtRepository.getJwtTokensByCreatedAtIsGreaterThan(new Date(System.currentTimeMillis() - 259200000), user.getId());
-                    user.setEnabled(!jwt.isEmpty());
-                    if (jwt.isEmpty())
-                        kafkaNotify.notifyUser("User is disabled");
-                    userRepository.save(user);
-                });
-        System.out.println("Code for Enabled is being executed...");
-    }
 }
