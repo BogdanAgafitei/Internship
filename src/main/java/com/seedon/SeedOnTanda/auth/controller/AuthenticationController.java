@@ -1,5 +1,9 @@
-package com.seedon.SeedOnTanda.auth;
+package com.seedon.SeedOnTanda.auth.controller;
 
+import com.seedon.SeedOnTanda.auth.AuthenticationRequest;
+import com.seedon.SeedOnTanda.auth.AuthenticationResponse;
+import com.seedon.SeedOnTanda.auth.RegisterRequest;
+import com.seedon.SeedOnTanda.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +20,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

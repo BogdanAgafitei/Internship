@@ -1,0 +1,3 @@
+FROM openjdk:17
+COPY SeedOn-*.jar /seedon.jar
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "seedon.jar"]

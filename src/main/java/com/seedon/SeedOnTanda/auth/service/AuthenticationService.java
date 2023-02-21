@@ -1,12 +1,15 @@
-package com.seedon.SeedOnTanda.auth;
+package com.seedon.SeedOnTanda.auth.service;
 
+import com.seedon.SeedOnTanda.auth.AuthenticationRequest;
+import com.seedon.SeedOnTanda.auth.AuthenticationResponse;
+import com.seedon.SeedOnTanda.auth.RegisterRequest;
 import com.seedon.SeedOnTanda.auth.config.JwtTokenService;
+import com.seedon.SeedOnTanda.auth.userdetails.SeedOnUserDetails;
 import com.seedon.SeedOnTanda.enums.statuses.Statuses;
 import com.seedon.SeedOnTanda.jwt.entity.Jwt;
 import com.seedon.SeedOnTanda.jwt.service.JwtService;
 import com.seedon.SeedOnTanda.user.dto.UserDTO;
 import com.seedon.SeedOnTanda.user.entity.User;
-import com.seedon.SeedOnTanda.user.repository.UserRepository;
 import com.seedon.SeedOnTanda.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

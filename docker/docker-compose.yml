@@ -10,13 +10,11 @@ services :
       - no-internet
       - internet
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://192.168.0.130:5432/SeedOnTanda
+      - SPRING_DATASOURCE_IP=192.168.0.130
+      - SPRING_DATASOURCE_PORT=5432
+      - SPRING_DATABASE=SeedOnTanda
       - SPRING_DATASOURCE_USERNAME=amigoscode
       - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_FLYWAY_URL=jdbc:postgresql://192.168.0.130:5432/SeedOnTanda
-      - SPRING_FLYWAY_USER=amigoscode
-      - SPRING_FLYWAY_PASSWORD=password
-      - SPRING_KAFKA_SERVER=localhost:29092
     ports:
       - 8080:8080
 

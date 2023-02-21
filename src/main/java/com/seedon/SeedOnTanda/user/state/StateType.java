@@ -10,8 +10,8 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME;
 
 @JsonTypeInfo(use = NAME, include = PROPERTY)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value=AdminState.class, name = "AdminState"),
-        @JsonSubTypes.Type(value=UserState.class, name = "UserState")
+        @JsonSubTypes.Type(value = AdminState.class, name = "AdminState"),
+        @JsonSubTypes.Type(value = UserState.class, name = "UserState")
 })
 public interface StateType extends Serializable {
 }

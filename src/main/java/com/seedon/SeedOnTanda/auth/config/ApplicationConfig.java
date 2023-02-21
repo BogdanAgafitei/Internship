@@ -1,6 +1,6 @@
 package com.seedon.SeedOnTanda.auth.config;
 
-import com.seedon.SeedOnTanda.auth.SeedOnUserDetails;
+import com.seedon.SeedOnTanda.auth.userdetails.SeedOnUserDetails;
 import com.seedon.SeedOnTanda.common.Encryption;
 import com.seedon.SeedOnTanda.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -4,10 +4,8 @@ import com.seedon.SeedOnTanda.enums.statuses.Statuses;
 import com.seedon.SeedOnTanda.jwt.entity.Jwt;
 import com.seedon.SeedOnTanda.jwt.repository.JwtRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Optional;
 
 @Service

@@ -1,0 +1,3 @@
+FROM openjdk:17
+COPY SeedOnTanda-*.jar /seedon.jar
+CMD ["java", "-Dspring.profiles.active=dev", "-jar", "seedon.jar"]

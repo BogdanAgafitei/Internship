@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/roles")
+@RequestMapping("/v1/roles")
 public class RoleRestController {
 
     private final RoleService roleService;

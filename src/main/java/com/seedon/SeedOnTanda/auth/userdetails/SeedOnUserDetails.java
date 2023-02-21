@@ -1,4 +1,4 @@
-package com.seedon.SeedOnTanda.auth;
+package com.seedon.SeedOnTanda.auth.userdetails;
 
 import com.seedon.SeedOnTanda.enums.roles.RoleValues;
 import com.seedon.SeedOnTanda.role.entity.Role;
