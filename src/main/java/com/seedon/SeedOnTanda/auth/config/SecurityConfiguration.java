@@ -21,7 +21,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,9 +39,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/").permitAll()
-                        .anyRequest().hasRole("ROLE_ADMIN"))
-                .authenticationProvider(authenticationProvider)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/*").authenticated()
+                )
+//                .authenticationProvider(authenticationProvider)
                 .httpBasic(withDefaults());
         return http.build();
     }

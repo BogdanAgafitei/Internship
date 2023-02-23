@@ -1,8 +1,5 @@
 package com.seedon.SeedOnTanda.common;
 
-import com.seedon.SeedOnTanda.role.entity.Role;
-import com.seedon.SeedOnTanda.user.dto.UserDTO;
-import com.seedon.SeedOnTanda.user.entity.User;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -58,31 +55,6 @@ public class Encryption {
         return null;
     }
 
-    public static UserDTO userToDtoMapper(User user) {
-        return new UserDTO(
-                user.getId(),
-                decrypt(user.getFirstName()),
-                decrypt(user.getLastName()),
-                user.getUsername(),
-                decrypt(user.getEmail()),
-                user.getPassword(),
-                decrypt(user.getPhoneNumber()),
-                user.getRoles().stream()
-                        .map(Role::getRoleName)
-                        .toList());
-    }
-
-    public static User userDtoToUserMapper(UserDTO userDTO) {
-        return new User(
-                userDTO.getId(),
-                encrypt(userDTO.getFirstName()),
-                encrypt(userDTO.getLastName()),
-                userDTO.getUsername(),
-                encrypt(userDTO.getEmail()),
-                userDTO.getPassword(),
-                encrypt(userDTO.getPhoneNumber())
-        );
-    }
 }
 
 

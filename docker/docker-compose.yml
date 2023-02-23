@@ -15,6 +15,10 @@ services :
       - SPRING_DATABASE=SeedOnTanda
       - SPRING_DATASOURCE_USERNAME=amigoscode
       - SPRING_DATASOURCE_PASSWORD=password
+      - AUTH_BASE_URL=http://82.77.39.191:9008/api
+      - AUTH_HEADER_NAME=SeedOn-1hRVKVil99
+      - AUTH_HEADER_VALUE=uOWtn76RtFtTA7hskGDObPajsn1qKB1fLLRa3syHEXK6yzkV5bfC72YeHhe0
+      - AUTH_VALIDATE=/v1/auth/session
     ports:
       - 8080:8080
 
