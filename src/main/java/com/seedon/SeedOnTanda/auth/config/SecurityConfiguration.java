@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/").hasAuthority(RoleValues.ROLE_ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/api/v1/*").authenticated()
+                        .requestMatchers("/api/v1/**").authenticated()
                 )
 //                .authenticationProvider(authenticationProvider)
                 .httpBasic(withDefaults());

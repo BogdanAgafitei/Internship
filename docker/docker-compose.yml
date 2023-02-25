@@ -19,6 +19,8 @@ services :
       - AUTH_HEADER_NAME=SeedOn-1hRVKVil99
       - AUTH_HEADER_VALUE=uOWtn76RtFtTA7hskGDObPajsn1qKB1fLLRa3syHEXK6yzkV5bfC72YeHhe0
       - AUTH_VALIDATE=/v1/auth/session
+      - STORAGE_BASE_URL=http:localhost:8080/api/v1/files/
+      - STORAGE_PATH_URL=/api/v1/files
     ports:
       - 8080:8080
 

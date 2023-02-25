@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ResponseFile {
+    private String id;
     private String name;
     private String url;
     private String type;
-    private long size;
+    private int size;
+
 }
