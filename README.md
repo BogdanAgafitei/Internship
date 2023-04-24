@@ -1,5 +1,5 @@
 # SeedOnTanda
-SeedOnTanda is a spring boot application for creating a raffle
+SeedOnTanda is a spring boot application for creating a raffle, authentication was made here as a monolith application and then we used a micro-service for it. 
 
 # Build And Run
 /bin/zsh /Users/hby/Documents/SeedOnTanda/script.sh
